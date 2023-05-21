@@ -8,11 +8,17 @@ using std::endl;
 
 #include "grid.h"
 
+void wait(int ms) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
 int main(int argc, char* argv[]) {
   int numRows;
   int numColumns;
   int numGenerations;
   int delay;
+
+  // Initialize empty grid
   Grid grid(0, 0);
 
   if (argc == 2) {
@@ -21,9 +27,6 @@ int main(int argc, char* argv[]) {
       std::vector<int> gridSettings = grid.importStateFromFile(file);
       numGenerations = gridSettings.at(0);
       delay = gridSettings.at(1);
-
-      cout << "numGenerations: " << numGenerations << endl;
-      cout << "delay: " << delay << endl;
     }
   } else if (argc > 2) {
     cout << "Please provide exactly one argument.\n";
@@ -37,8 +40,6 @@ int main(int argc, char* argv[]) {
     cout << "Enter delay between generations in milliseconds: ";
     cin >> delay;
 
-    // Create a grid
-    // Grid grid(numRows, numColumns);
     grid.setNumRows(numRows);
     grid.setNumCols(numColumns);
     grid.setCells();
@@ -52,7 +53,7 @@ int main(int argc, char* argv[]) {
   // Simulate specified number of generations
   for (int gen = 1; gen <= numGenerations; gen++) {
     grid.update();
-    std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+    wait(delay);
 
     // Output the state of the grid after the update
     cout << "Generation " << gen << ":\n";

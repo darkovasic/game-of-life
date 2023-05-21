@@ -3,6 +3,7 @@
 using std::cin;
 using std::cout;
 using std::endl;
+using std::string;
 
 Grid::Grid(int numRows, int numCols)
     : m_numRows(numRows), m_numCols(numCols), m_cells(numRows * numCols) {}
@@ -23,7 +24,7 @@ const Cell& Grid::getCell(int row, int col) const {
 }
 
 bool charToBool(char const& ch) {
-  std::string str(1, ch);
+  string str(1, ch);
   return str != "0";
 }
 
@@ -41,7 +42,7 @@ void Grid::setRandomInitialState(double probability) {
   }
 }
 
-std::vector<int> Grid::setInitialState(std::vector<std::string>& lines) {
+std::vector<int> Grid::setInitialState(std::vector<string>& lines) {
   std::vector<int> gridSettings;
 
   m_numRows = std::stoi(lines.at(0));
@@ -73,13 +74,13 @@ void Grid::print() {
 }
 
 std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
-  std::string line;
-  std::vector<std::string> words;
+  string line;
+  std::vector<string> words;
   int lineNumber = 1;
   while (std::getline(file, line)) {
     if (line.empty()) continue;
     std::istringstream iss(line);
-    std::string word;
+    string word;
     if (lineNumber == 1 || lineNumber == 2) {
       // Split the string by spaces
       while (iss >> word) {
@@ -98,7 +99,7 @@ std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
 }
 
 void Grid::writeFile(int gen) {
-  std::string filename;
+  string filename;
   cout << "Please enter filename: ";
   cin >> filename;
   std::ofstream file(filename + ".txt");
