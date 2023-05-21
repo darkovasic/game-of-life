@@ -92,6 +92,7 @@ std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
     }
     lineNumber++;
   }
+  file.close();
 
   std::vector<int> gridSettings = setInitialState(words);
 
