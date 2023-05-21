@@ -102,7 +102,14 @@ void Grid::writeFile(int gen) {
   string filename;
   cout << "Please enter filename: ";
   cin >> filename;
-  std::ofstream file(filename + ".txt");
+
+  if (std::filesystem::exists(filename)) {
+    std::cout << "\nFile already exists." << std::endl;
+    cout << "Please enter filename: ";
+    cin >> filename;
+  }
+
+  std::ofstream file(filename);
 
   if (file.is_open()) {
     file << m_numRows << " " << m_numCols << std::endl;
