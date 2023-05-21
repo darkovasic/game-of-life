@@ -3,6 +3,7 @@
 using std::cin;
 using std::cout;
 using std::endl;
+using std::stoi;
 using std::string;
 
 Grid::Grid(int numRows, int numCols)
@@ -45,11 +46,11 @@ void Grid::setRandomInitialState(double probability) {
 std::vector<int> Grid::setInitialState(std::vector<string>& lines) {
   std::vector<int> gridSettings;
 
-  m_numRows = std::stoi(lines.at(0));
-  m_numCols = std::stoi(lines.at(1));
+  m_numRows = stoi(lines.at(0));
+  m_numCols = stoi(lines.at(1));
   m_cells.resize(m_numRows * m_numCols);
-  gridSettings.push_back(std::stoi(lines.at(2)));
-  gridSettings.push_back(std::stoi(lines.at(3)));
+  gridSettings.push_back(stoi(lines.at(2)));
+  gridSettings.push_back(stoi(lines.at(3)));
 
   lines.erase(lines.begin(), lines.begin() + 4);
 
@@ -76,6 +77,7 @@ void Grid::print() {
 std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
   string line;
   std::vector<string> words;
+
   int lineNumber = 1;
   while (std::getline(file, line)) {
     if (line.empty()) continue;
@@ -100,7 +102,7 @@ std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
 }
 
 void Grid::writeFile(int gen) {
-  string filename;
+  std::filesystem::path filename;
   cout << "Please enter filename: ";
   cin >> filename;
 
