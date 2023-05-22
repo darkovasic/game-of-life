@@ -205,11 +205,9 @@ void Grid::printGeneration(GenerationIndex generation) const {
 }
 
 void Grid::previousGeneration() {
-  if (m_generations.size() >= 2) {
-    cout << "Generation size: " << m_generations.size() << endl;
+  if (m_generations.size() > 1) {
     m_generations.pop_back();
     int lastIndex = m_generations.size() - 2;
-    cout << "Generation size: " << m_generations.size() << endl;
     printGeneration(lastIndex);
   } else {
     cout << "\nThere is only one generation.\n\n";
