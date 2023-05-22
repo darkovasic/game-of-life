@@ -8,8 +8,16 @@ using std::endl;
 
 #include "grid.h"
 
-void wait(int ms) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+int showGameOptions() {
+  int selectedOption;
+  cout << "1. Go back one generation\n";
+  cout << "2. Go forward one generation\n";
+  cout << "3. Save current state to a file\n";
+  cout << "4. Quit\n\n";
+  cout << "Choose an option [default: 4]: ";
+  cin >> selectedOption;
+
+  return selectedOption;
 }
 
 int main(int argc, char* argv[]) {
@@ -30,6 +38,7 @@ int main(int argc, char* argv[]) {
     }
   } else if (argc > 2) {
     cout << "Please provide exactly one argument.\n";
+    return 0;
   } else {
     cout << "Enter width of the playing field: ";
     cin >> numRows;
@@ -46,34 +55,26 @@ int main(int argc, char* argv[]) {
     grid.setRandomInitialState(0.3);
   }
 
-  // Output the initial state of the grid
-  cout << endl << "Initial state:" << endl;
-  grid.print();
+  grid.updateAndSaveGenerations(numGenerations, delay);
 
-  // Simulate specified number of generations
-  for (int gen = 1; gen <= numGenerations; gen++) {
-    grid.update();
-    wait(delay);
+  while (true) {
+    int selectedOption = showGameOptions();
 
-    // Output the state of the grid after the update
-    cout << "Generation " << gen << ":\n";
-    grid.print();
-  }
+    switch (selectedOption) {
+      case 1:
+        grid.previousGeneration();
+        break;
 
-  int selectedOption;
-  cout << "1. Go back one generation\n";
-  cout << "2. Go forward one generation\n";
-  cout << "3. Save current state to a file\n";
-  cout << "4. Quit\n\n";
-  cout << "Choose an option [default: 4]: ";
-  cin >> selectedOption;
+        // case 2:
+        //   grid.nextGeneration(numGenerations);
+        //   break;
 
-  switch (selectedOption) {
-    case 3:
-      grid.writeFile(numGenerations);
-      break;
+      case 3:
+        grid.writeFile(numGenerations);
+        break;
 
-    default:
-      return 0;
+      default:
+        return 0;
+    }
   }
 }

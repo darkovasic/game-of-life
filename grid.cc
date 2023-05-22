@@ -64,16 +64,6 @@ std::vector<int> Grid::setInitialState(std::vector<string>& lines) {
   return gridSettings;
 }
 
-void Grid::print() {
-  for (int i = 0; i < m_numRows; i++) {
-    for (int j = 0; j < m_numCols; j++) {
-      const Cell& cell = getCell(i, j);
-      cout << (cell.isAlive() ? "X" : " ");
-    }
-    cout << endl;
-  }
-}
-
 std::vector<int> Grid::importStateFromFile(std::ifstream& file) {
   string line;
   std::vector<string> words;
@@ -107,7 +97,7 @@ void Grid::writeFile(int gen) {
   cin >> filename;
 
   if (std::filesystem::exists(filename)) {
-    std::cout << "\nFile already exists." << std::endl;
+    std::cout << "\nFile already exists.\n";
     cout << "Please enter filename: ";
     cin >> filename;
   }
@@ -115,8 +105,8 @@ void Grid::writeFile(int gen) {
   std::ofstream file(filename);
 
   if (file.is_open()) {
-    file << m_numRows << " " << m_numCols << std::endl;
-    file << gen << " " << gen << std::endl;
+    file << m_numRows << " " << m_numCols << endl;
+    file << gen << " " << gen << endl;
     for (int i = 0; i < m_numRows; i++) {
       for (int j = 0; j < m_numCols; j++) {
         const Cell& cell = getCell(i, j);
@@ -126,9 +116,9 @@ void Grid::writeFile(int gen) {
     }
     file << "\nEOF\n\n";
     file.close();
-    cout << "File created successfully." << std::endl;
+    cout << "File created successfully.\n";
   } else {
-    cout << "Failed to create the file." << std::endl;
+    cout << "Failed to create the file.\n";
   }
 }
 
@@ -167,17 +157,61 @@ int Grid::countAliveNeighbors(int row, int col) const {
   return count;
 }
 
-void Grid::update() {
-  std::vector<Cell> newCells(m_cells.size());
+void wait(int ms) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
 
-  for (int row = 0; row < m_numRows; row++) {
-    for (int col = 0; col < m_numCols; col++) {
-      int index = row * m_numCols + col;
-      const Cell& cell = m_cells[index];
-      int numNeighbors = countAliveNeighbors(row, col);
-      newCells[index] = cell.getNextGeneration(numNeighbors);
+void Grid::updateAndSaveGenerations(int numGenerations, int delay) {
+  m_generations.clear();             // Clear any existing generations
+  m_generations.push_back(m_cells);  // Save the initial state
+
+  // Output the initial state of the grid
+  // cout << "\nInitial state:\n";
+  // printGeneration(0);
+
+  for (int i = 0; i < numGenerations; i++) {
+    std::vector<Cell> newCells(m_cells.size());
+
+    for (int row = 0; row < m_numRows; row++) {
+      for (int col = 0; col < m_numCols; col++) {
+        int index = row * m_numCols + col;
+        const Cell& cell = m_cells[index];
+        int numNeighbors = countAliveNeighbors(row, col);
+        newCells[index] = cell.getNextGeneration(numNeighbors);
+      }
+    }
+
+    m_generations.push_back(newCells);  // Save the new generation
+    wait(delay);
+    m_cells = std::move(newCells);  // Update the current generation
+    printGeneration(i);             // Print the new generation
+  }
+}
+
+void Grid::printGeneration(GenerationIndex generation) const {
+  if (generation < m_generations.size()) {
+    cout << "Generation " << generation + 1 << ":\n";
+    const std::vector<Cell>& cells = m_generations[generation];
+
+    for (int row = 0; row < m_numRows; row++) {
+      for (int col = 0; col < m_numCols; col++) {
+        int index = row * m_numCols + col;
+        const Cell& cell = cells[index];
+        std::cout << (cell.isAlive() ? "X" : " ") << " ";
+      }
+      std::cout << "\n";
     }
   }
+}
 
-  m_cells = std::move(newCells);
+void Grid::previousGeneration() {
+  if (m_generations.size() >= 2) {
+    cout << "Generation size: " << m_generations.size() << endl;
+    m_generations.pop_back();
+    int lastIndex = m_generations.size() - 2;
+    cout << "Generation size: " << m_generations.size() << endl;
+    printGeneration(lastIndex);
+  } else {
+    cout << "\nThere is only one generation.\n\n";
+  }
 }
