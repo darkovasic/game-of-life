@@ -165,27 +165,29 @@ void Grid::updateAndSaveGenerations(int numGenerations, int delay) {
   m_generations.clear();             // Clear any existing generations
   m_generations.push_back(m_cells);  // Save the initial state
 
-  // Output the initial state of the grid
-  // cout << "\nInitial state:\n";
-  // printGeneration(0);
-
   for (int i = 0; i < numGenerations; i++) {
-    std::vector<Cell> newCells(m_cells.size());
-
-    for (int row = 0; row < m_numRows; row++) {
-      for (int col = 0; col < m_numCols; col++) {
-        int index = row * m_numCols + col;
-        const Cell& cell = m_cells[index];
-        int numNeighbors = countAliveNeighbors(row, col);
-        newCells[index] = cell.getNextGeneration(numNeighbors);
-      }
-    }
-
-    m_generations.push_back(newCells);  // Save the new generation
+    calcNextGeneration();
     wait(delay);
-    m_cells = std::move(newCells);  // Update the current generation
-    printGeneration(i);             // Print the new generation
   }
+}
+
+void Grid::calcNextGeneration() {
+  int index;
+  std::vector<Cell> newCells(m_cells.size());
+
+  for (int row = 0; row < m_numRows; row++) {
+    for (int col = 0; col < m_numCols; col++) {
+      index = row * m_numCols + col;
+      const Cell& cell = m_cells[index];
+      int numNeighbors = countAliveNeighbors(row, col);
+      newCells[index] = cell.getNextGeneration(numNeighbors);
+    }
+  }
+
+  m_generations.push_back(newCells);         // Save the new generation
+  m_cells = std::move(newCells);      // Update the current generation
+  int lastIndex = m_generations.size() - 2;  // Get index of the last iterator
+  printGeneration(lastIndex);                // Print the new generation
 }
 
 void Grid::printGeneration(GenerationIndex generation) const {
@@ -212,4 +214,11 @@ void Grid::previousGeneration() {
   } else {
     cout << "\nThere is only one generation.\n\n";
   }
+}
+
+void Grid::nextGeneration() {
+  if (m_generations.size() > 20) {
+    m_generations.pop_front();
+  }
+  calcNextGeneration();
 }

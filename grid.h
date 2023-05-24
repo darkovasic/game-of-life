@@ -37,6 +37,8 @@ class Grid {
   Cell& getCell(int row, int col);
   void updateAndSaveGenerations(int numGenerations, int delay);
   void previousGeneration();
+  void nextGeneration();
+  void calcNextGeneration();
 
  private:
   int m_numRows;

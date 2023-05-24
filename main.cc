@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
         grid.previousGeneration();
         break;
 
-        // case 2:
-        //   grid.nextGeneration(numGenerations);
-        //   break;
+      case 2:
+        grid.nextGeneration();
+        break;
 
       case 3:
         grid.writeFile(numGenerations);
