@@ -187,10 +187,10 @@ void Grid::calcNextGeneration() {
   m_generations.push_back(newCells);         // Save the new generation
   m_cells = std::move(newCells);      // Update the current generation
   int lastIndex = m_generations.size() - 2;  // Get index of the last iterator
-  printGeneration(lastIndex);                // Print the new generation
+  printLastGeneration(lastIndex);            // Print the new generation
 }
 
-void Grid::printGeneration(GenerationIndex generation) const {
+void Grid::printLastGeneration(GenerationIndex generation) const {
   if (generation < m_generations.size()) {
     cout << "Generation " << generation + 1 << ":\n";
     const std::vector<Cell>& cells = m_generations[generation];
@@ -210,7 +210,7 @@ void Grid::previousGeneration() {
   if (m_generations.size() > 1) {
     m_generations.pop_back();
     int lastIndex = m_generations.size() - 2;
-    printGeneration(lastIndex);
+    printLastGeneration(lastIndex);
   } else {
     cout << "\nThere is only one generation.\n\n";
   }

@@ -29,7 +29,7 @@ class Grid {
   const Cell& getCell(int row, int col) const;
   vector<int> setInitialState(vector<string>&);
   void setRandomInitialState(double probability);
-  void printGeneration(GenerationIndex generation) const;
+  void printLastGeneration(GenerationIndex generation) const;
   vector<int> importStateFromFile(std::ifstream& file);
   int countAliveNeighbors(int row, int col) const;
   void writeFile(int gen);

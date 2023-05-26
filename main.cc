@@ -1,6 +1,4 @@
-#include <chrono>
 #include <iostream>
-#include <thread>
 
 using std::cin;
 using std::cout;
