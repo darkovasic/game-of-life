@@ -33,7 +33,34 @@ TEST(GridTest, SetInitialState) {
   }
 }
 
-int main(int argc, char **argv) {
+TEST(GridTest, NextGeneration) {
+  // Create a grid with a specific initial state
+  Grid grid(4, 4);
+  grid.setCell(1, 1, true);
+  grid.setCell(1, 2, true);
+  grid.setCell(2, 1, true);
+  grid.setCell(2, 2, true);
+
+  // Get the next generation
+  grid.calcNextGeneration();
+
+  // Define the expected states for each cell
+  std::vector<std::pair<int, int>> cellsToCheck = {
+      {1, 1}, {1, 2}, {2, 1}, {2, 2}, {0, 0}, {0, 1}, {0, 2},
+      {1, 0}, {2, 0}, {3, 0}, {3, 1}, {3, 2}, {3, 3}};
+
+  // Check the state of each cell in the next generation
+  for (const auto& cell : cellsToCheck) {
+    int row = cell.first;
+    int col = cell.second;
+    bool expectedAlive =
+        (row >= 1 && row <= 2) &&
+        (col >= 1 && col <= 2);  // Cells in the middle survive, others die
+    EXPECT_EQ(grid.getCell(row, col).isAlive(), expectedAlive);
+  }
+}
+
+int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
