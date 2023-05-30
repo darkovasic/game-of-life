@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(GameOfLife VERSION 0.1.0)
 
+add_compile_options(-std=c++17 -pedantic -Wall -Wextra -Werror -pedantic-errors)
+
 find_package(GTest REQUIRED)
 message("GTEST_INCLUDE_DIRS = ${GTEST_INCLUDE_DIRS}")
 
