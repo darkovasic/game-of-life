@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
   int delay;
 
   // Initialize empty grid
-  Grid grid(0, 0);
+  Grid grid;
 
   if (argc == 2) {
     std::ifstream file(argv[1]);

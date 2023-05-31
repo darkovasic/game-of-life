@@ -60,6 +60,59 @@ TEST(GridTest, NextGeneration) {
   }
 }
 
+TEST(GridTest, ImportStateFromFile) {
+  // Create a Grid object
+  Grid grid;
+
+  // Open the test file
+  std::ifstream testFile("inputLife.txt");
+  ASSERT_TRUE(testFile.is_open()) << "Failed to open test file";
+
+  // Import the state from the file
+  grid.importStateFromFile(testFile);
+
+  // Read the expected state from another file
+  std::ifstream expectedFile("outputLife.txt");
+  ASSERT_TRUE(expectedFile.is_open()) << "Failed to open expected file";
+
+  // Create a Grid object to store the expected state
+  Grid expectedGrid;
+
+  // Import the expected state from the file
+  expectedGrid.importStateFromFile(expectedFile);
+
+  // Compare the imported state with the expected state
+  for (int row = 0; row < grid.getNumRows(); ++row) {
+    for (int col = 0; col < grid.getNumCols(); ++col) {
+      EXPECT_EQ(grid.getCell(row, col).isAlive(),
+                expectedGrid.getCell(row, col).isAlive());
+    }
+  }
+}
+
+// TEST(GridStressTest, LargeGrid) {
+//   const int numRows = 100;
+//   const int numCols = 100;
+//   const int numGenerations = 1000;
+
+//   Grid grid(numRows, numCols);
+
+//   // Set initial state with random values
+//   grid.setRandomInitialState(0.3);
+
+//   // Simulate multiple generations
+//   for (int generation = 1; generation <= numGenerations; ++generation) {
+//     grid.calcNextGeneration();
+//   }
+
+//   // Ensure that the grid has the expected dimensions
+//   EXPECT_EQ(grid.getNumRows(), numRows);
+//   EXPECT_EQ(grid.getNumCols(), numCols);
+
+//   // Print the final generation for inspection
+//   //   grid.printLastGeneration(numGenerations - 1);
+// }
+
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

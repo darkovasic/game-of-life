@@ -16,3 +16,4 @@ add_executable(TestRunner testRunner.cc)
 target_link_libraries(TestRunner PUBLIC Grid Cell ${GTEST_LIBRARIES} pthread)
 
 configure_file(inputLife.txt inputLife.txt COPYONLY)
+configure_file(outputLife.txt outputLife.txt COPYONLY)

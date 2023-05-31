@@ -20,7 +20,7 @@ using GenerationIndex = typename std::deque<std::vector<Cell>>::size_type;
 
 class Grid {
  public:
-  Grid(int numRows, int numCols);
+  Grid(int numRows = 0, int numCols = 0);
   int getNumRows() const;
   int getNumCols() const;
   void setNumRows(int numRows);
