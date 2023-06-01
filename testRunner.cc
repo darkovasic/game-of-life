@@ -60,6 +60,37 @@ TEST(GridTest, NextGeneration) {
   }
 }
 
+TEST(GridTest, PreviousGeneration) {
+  // Create 4x4 grid
+  Grid grid(4, 4);
+
+  // Set specific cells as alive in the initial generation
+  grid.setCell(1, 1, true);
+  grid.setCell(1, 2, true);
+  grid.setCell(2, 1, true);
+  grid.setCell(2, 2, true);
+
+  // Advance to the next generation
+  grid.calcNextGeneration();
+
+  // Store the current grid state
+  Grid initialGrid = grid;
+
+  // Advance to the next generation
+  grid.calcNextGeneration();
+
+  // Go back to the previous generation
+  grid.previousGeneration();
+
+  // Verify that the grid state is correctly restored
+  for (int row = 0; row < grid.getNumRows(); ++row) {
+    for (int col = 0; col < grid.getNumCols(); ++col) {
+      EXPECT_EQ(grid.getCell(row, col).isAlive(),
+                initialGrid.getCell(row, col).isAlive());
+    }
+  }
+}
+
 TEST(GridTest, ImportStateFromFile) {
   // Create a Grid object
   Grid grid;
