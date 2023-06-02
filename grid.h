@@ -1,7 +1,11 @@
 #pragma once
 
+#include <png.h>
+
 #include <algorithm>
 #include <chrono>
+#include <cstdint>
+#include <cstring>
 #include <deque>
 #include <filesystem>
 #include <fstream>
@@ -39,6 +43,7 @@ class Grid {
   void previousGeneration();
   void nextGeneration();
   void calcNextGeneration();
+  void gridToImage(const std::string& outputFilename);
 
  private:
   int m_numRows;

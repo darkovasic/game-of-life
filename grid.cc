@@ -97,7 +97,7 @@ void Grid::writeFile(int gen) {
   cin >> filename;
 
   if (std::filesystem::exists(filename)) {
-    std::cout << "\nFile already exists.\n";
+    std::cerr << "\nFile already exists.\n";
     cout << "Please enter filename: ";
     cin >> filename;
   }
@@ -118,7 +118,7 @@ void Grid::writeFile(int gen) {
     file.close();
     cout << "File created successfully.\n";
   } else {
-    cout << "Failed to create the file.\n";
+    std::cerr << "Failed to create the file.\n";
   }
 }
 
@@ -212,7 +212,7 @@ void Grid::previousGeneration() {
     int lastIndex = m_generations.size() - 2;
     printLastGeneration(lastIndex);
   } else {
-    cout << "\nThere is only one generation.\n\n";
+    std::cerr << "\nThere is only one generation.\n\n";
   }
 }
 
@@ -221,4 +221,110 @@ void Grid::nextGeneration() {
     m_generations.pop_front();
   }
   calcNextGeneration();
+}
+
+void Grid::gridToImage(const std::string& outputFilename) {
+  const int width = m_numCols * 10;   // Image width
+  const int height = m_numRows * 10;  // Image height
+  const std::vector<Cell>* lastGeneration = nullptr;
+
+  std::vector<uint8_t> image(width * height * 4,
+                             255);  // RGBA format with white background
+
+  if (m_generations.size() >= 2) {
+    lastGeneration = &m_generations[m_generations.size() - 2];
+  } else {
+    std::cerr << "Not enough generations in m_generations" << std::endl;
+  }
+
+  // Update image based on grid state
+  if (lastGeneration) {
+    for (int row = 0; row < m_numRows; ++row) {
+      for (int col = 0; col < m_numCols; ++col) {
+        const Cell& cell = (*lastGeneration)[row * m_numCols + col];
+        const bool cellState = cell.isAlive();
+        const int startX = col * 10;
+        const int startY = (m_numRows - row - 1) * 10;  // Reverse the row index
+
+        // Set cell color based on state
+        const uint8_t color = cellState ? 0 : 255;
+
+        // Update image pixels for the cell
+        for (int x = startX; x < startX + 10; ++x) {
+          for (int y = startY; y < startY + 10; ++y) {
+            const int pixelIndex = (y * width + x) * 4;
+            image[pixelIndex] = color;      // Red channel
+            image[pixelIndex + 1] = color;  // Green channel
+            image[pixelIndex + 2] = color;  // Blue channel
+            image[pixelIndex + 3] = 255;    // Alpha channel
+          }
+        }
+      }
+    }
+
+    // Reverse the image rows
+    std::vector<uint8_t> reversedImage(width * height * 4);
+    for (int row = 0; row < height; ++row) {
+      const int reversedRow = height - row - 1;
+      std::memcpy(&reversedImage[reversedRow * width * 4],
+                  &image[row * width * 4], width * 4);
+    }
+
+    // Open output file for writing using FILE*
+    FILE* file = fopen(outputFilename.c_str(), "wb");
+    if (!file) {
+      std::cerr << "Error opening output file" << std::endl;
+      return;
+    }
+
+    // Initialize libpng structures
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr,
+                                              nullptr, nullptr);
+    if (!png) {
+      std::cerr << "Error creating png_struct" << std::endl;
+      fclose(file);
+      return;
+    }
+
+    png_infop info = png_create_info_struct(png);
+    if (!info) {
+      std::cerr << "Error creating png_info" << std::endl;
+      png_destroy_write_struct(&png, nullptr);
+      fclose(file);
+      return;
+    }
+
+    // Set up error handling
+    if (setjmp(png_jmpbuf(png))) {
+      std::cerr << "Error writing PNG image" << std::endl;
+      png_destroy_write_struct(&png, &info);
+      fclose(file);
+      return;
+    }
+
+    // Set output stream
+    png_init_io(png, file);
+
+    // Set image attributes
+    png_set_IHDR(png, info, width, height, 8, PNG_COLOR_TYPE_RGBA,
+                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT);
+
+    // Write image data
+    std::vector<png_bytep> rowPointers(height);
+    for (int y = 0; y < height; ++y) {
+      rowPointers[y] =
+          reinterpret_cast<png_bytep>(&reversedImage[y * width * 4]);
+    }
+    png_set_rows(png, info, rowPointers.data());
+    png_write_png(png, info, PNG_TRANSFORM_IDENTITY, nullptr);
+
+    // Cleanup
+    png_destroy_write_struct(&png, &info);
+    fclose(file);
+
+    std::cout << "Image saved to " << outputFilename << std::endl;
+  } else {
+    std::cerr << "No last generation available" << std::endl;
+  }
 }

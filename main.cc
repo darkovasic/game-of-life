@@ -1,17 +1,16 @@
-#include <iostream>
+#include "grid.h"
 
 using std::cin;
 using std::cout;
 using std::endl;
-
-#include "grid.h"
 
 int showGameOptions() {
   int selectedOption;
   cout << "1. Go back one generation\n";
   cout << "2. Go forward one generation\n";
   cout << "3. Save current state to a file\n";
-  cout << "4. Quit\n\n";
+  cout << "4. Save currently shown field to PNG file\n";
+  cout << "5. Quit\n\n";
   cout << "Choose an option [default: 4]: ";
   cin >> selectedOption;
 
@@ -35,7 +34,7 @@ int main(int argc, char* argv[]) {
       delay = gridSettings.at(1);
     }
   } else if (argc > 2) {
-    cout << "Please provide exactly one argument.\n";
+    std::cerr << "Please provide exactly one argument.\n";
     return 0;
   } else {
     cout << "Enter width of the playing field: ";
@@ -69,6 +68,10 @@ int main(int argc, char* argv[]) {
 
       case 3:
         grid.writeFile(numGenerations);
+        break;
+
+      case 4:
+        grid.gridToImage("grid.png");
         break;
 
       default:

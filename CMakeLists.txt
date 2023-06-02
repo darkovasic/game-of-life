@@ -1,16 +1,23 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(GameOfLife VERSION 0.1.0)
 
-add_compile_options(-std=c++17 -pedantic -Wall -Wextra -Werror -pedantic-errors)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(GTest REQUIRED)
-message("GTEST_INCLUDE_DIRS = ${GTEST_INCLUDE_DIRS}")
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIRS})
 
 add_library(Grid STATIC grid.cc)
+target_link_libraries(Grid PRIVATE ${PNG_LIBRARIES})
+
 add_library(Cell STATIC cell.cc)
 
 add_executable(GameOfLife main.cc)
-target_link_libraries(GameOfLife PUBLIC Grid Cell)
+target_link_libraries(GameOfLife PRIVATE Grid Cell ${PNG_LIBRARIES})
+target_compile_options(GameOfLife PRIVATE -pedantic -Wall -Wextra -Werror -pedantic-errors)
+target_compile_definitions(GameOfLife PRIVATE IMAGE_OUTPUT_PATH="${CMAKE_CURRENT_BINARY_DIR}/output.png")
+
+find_package(GTest REQUIRED)
 
 add_executable(TestRunner testRunner.cc)
 target_link_libraries(TestRunner PUBLIC Grid Cell ${GTEST_LIBRARIES} pthread)
