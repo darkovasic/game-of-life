@@ -11,7 +11,7 @@ int showGameOptions() {
   cout << "3. Save current state to a file\n";
   cout << "4. Save currently shown field to PNG file\n";
   cout << "5. Quit\n\n";
-  cout << "Choose an option [default: 4]: ";
+  cout << "Choose an option [default: 5]: ";
   cin >> selectedOption;
 
   return selectedOption;
