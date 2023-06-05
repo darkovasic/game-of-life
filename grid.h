@@ -43,7 +43,7 @@ class Grid {
   void previousGeneration();
   void nextGeneration();
   void calcNextGeneration();
-  void gridToImage(const std::string& outputFilename);
+  void gridToImage(std::filesystem::path outputFilename);
 
  private:
   int m_numRows;

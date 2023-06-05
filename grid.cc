@@ -223,7 +223,7 @@ void Grid::nextGeneration() {
   calcNextGeneration();
 }
 
-void Grid::gridToImage(const std::string& outputFilename) {
+void Grid::gridToImage(std::filesystem::path outputFilename) {
   const int width = m_numCols * 10;   // Image width
   const int height = m_numRows * 10;  // Image height
   const std::vector<Cell>* lastGeneration = nullptr;
