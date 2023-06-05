@@ -244,7 +244,7 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
         const Cell& cell = (*lastGeneration)[row * m_numCols + col];
         const bool cellState = cell.isAlive();
         const int startX = col * 10;
-        const int startY = (m_numRows - row - 1) * 10;  // Reverse the row index
+        const int startY = row * 10;
 
         // Set cell color based on state
         const uint8_t color = cellState ? 0 : 255;
@@ -260,14 +260,6 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
           }
         }
       }
-    }
-
-    // Reverse the image rows
-    std::vector<uint8_t> reversedImage(width * height * 4);
-    for (int row = 0; row < height; ++row) {
-      const int reversedRow = height - row - 1;
-      std::memcpy(&reversedImage[reversedRow * width * 4],
-                  &image[row * width * 4], width * 4);
     }
 
     // Open output file for writing using FILE*
@@ -313,8 +305,7 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
     // Write image data
     std::vector<png_bytep> rowPointers(height);
     for (int y = 0; y < height; ++y) {
-      rowPointers[y] =
-          reinterpret_cast<png_bytep>(&reversedImage[y * width * 4]);
+      rowPointers[y] = reinterpret_cast<png_bytep>(&image[y * width * 4]);
     }
     png_set_rows(png, info, rowPointers.data());
     png_write_png(png, info, PNG_TRANSFORM_IDENTITY, nullptr);
