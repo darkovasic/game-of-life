@@ -234,7 +234,7 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
   if (m_generations.size() >= 2) {
     lastGeneration = &m_generations[m_generations.size() - 2];
   } else {
-    std::cerr << "Not enough generations in m_generations" << std::endl;
+    std::cerr << "Not enough generations in m_generations\n";
   }
 
   // Update image based on grid state
@@ -273,7 +273,7 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
     // Open output file for writing using FILE*
     FILE* file = fopen(outputFilename.c_str(), "wb");
     if (!file) {
-      std::cerr << "Error opening output file" << std::endl;
+      std::cerr << "Error opening output file\n";
       return;
     }
 
@@ -281,14 +281,14 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
     png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr,
                                               nullptr, nullptr);
     if (!png) {
-      std::cerr << "Error creating png_struct" << std::endl;
+      std::cerr << "Error creating png_struct\n";
       fclose(file);
       return;
     }
 
     png_infop info = png_create_info_struct(png);
     if (!info) {
-      std::cerr << "Error creating png_info" << std::endl;
+      std::cerr << "Error creating png_info\n";
       png_destroy_write_struct(&png, nullptr);
       fclose(file);
       return;
@@ -296,7 +296,7 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
 
     // Set up error handling
     if (setjmp(png_jmpbuf(png))) {
-      std::cerr << "Error writing PNG image" << std::endl;
+      std::cerr << "Error writing PNG image\n";
       png_destroy_write_struct(&png, &info);
       fclose(file);
       return;
@@ -325,6 +325,6 @@ void Grid::gridToImage(std::filesystem::path outputFilename) {
 
     std::cout << "Image saved to " << outputFilename << std::endl;
   } else {
-    std::cerr << "No last generation available" << std::endl;
+    std::cerr << "No last generation available\n";
   }
 }
